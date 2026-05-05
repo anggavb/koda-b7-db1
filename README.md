@@ -5,7 +5,7 @@ Table Book {
   title string
   publisher string
   category_id int [ref: > Category.id]
-  bookshelf_id int [ref: - Bookshelf.id]
+  bookshelf_id int [ref: > Bookshelf.id]
 }
 
 Table Category {
@@ -27,7 +27,7 @@ Table Borrow {
   id int [pk]
   borrower_name string
   book_id int [ref: > Book.id]
-  staff_id int [ref: - Staff.id]
+  staff_id int [ref: > Staff.id]
 }
 ```
 
@@ -59,10 +59,10 @@ erDiagram
         int staff_id FK
     }
 
-    Book ||--o{ Category : have
-    Book ||--|| Bookshelf : have
-    Borrow ||--o{ Book : borrowing
-    Borrow ||--|| Staff : record
+    Category ||--o{ Book : contains
+    Bookshelf ||--o{ Book : have
+    Borrow ||--o{ Book : takes
+    Staff ||--o{ Borrow : record
 ```
 
 # Minitask 2 - E-Commerce
@@ -88,26 +88,28 @@ Table Categories {
   name string
 }
 
-Table UserProduct {
-  user_id int [ref: > Users.id]
+Table OrderItems {
   product_id int [ref: > Products.id]
   order_id int [ref: - Orders.id]
+  quantity int
+  price_at_purchase decimal
 }
 
 Table Orders {
   id int [pk]
   total_price decimal
   user_id int [ref: > Users.id]
-  payment_id int [ref: - Payment.id]
+  payment_id int [ref: > Payment.id]
 }
 
 Enum PaymentMethod {
   bank
-  online
+  wallet
 }
 
 Table Payment {
   id int [pk]
+  name string
   method PaymentMethod
 }
 ```
@@ -115,41 +117,49 @@ Table Payment {
 ```mermaid
 erDiagram
     Users {
-        int id PK
-        string name
+        id int PK
+        name string
         email string
-        string phone_number
-        string address
-        bool isSeller
-    }
-    Products {
-        int id PK
-        string name
-        decimal price
-        int category_id FK
-    }
-    Categories {
-        int id PK
-        string name
-    }
-    UserProduct {
-        int user_id FK
-        int product_id FK
-        int order_id FK
-    }
-    Orders {
-        int id PK
-        decimal total_price
-        int payment_id FK
-    }
-    Payment {
-        int id PK
-        enum method
+        phone_number string
+        address string
+        isSeller bool
     }
 
-    Products ||--o{ Categories : have
-    UserProduct ||--o{ Users : customer
-    UserProduct ||--o{ Products : order
-    UserProduct ||--o{ Orders : record-order
-    Orders ||--|| Payment : pay
+    Products {
+        id int PK
+        name string
+        price decimal
+        category_id int FK
+    }
+
+    Categories {
+        id int PK
+        name string
+    }
+
+    OrderItems {
+        product_id int FK
+        order_id int FK
+        quantity int
+        price_at_purchase decimal
+    }
+
+    Orders {
+        id int PK
+        total_price decimal
+        user_id int FK
+        payment_id int FK
+    }
+
+    Payment {
+        id int PK
+        name string
+        method PaymentMethod
+    }
+
+    Categories ||--o{ Products : contains
+    Products ||--o{ OrderItems : has
+    Orders ||--o{ OrderItems : has
+    Users ||--o{ Orders : place
+    Payment ||--o{ Orders : "paid via"
 ```
