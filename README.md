@@ -1,4 +1,6 @@
 # Minitask 1 - Library
+### DB Diagram
+![Library](library.png)
 ```DB Diagram
 Table Book {
   id int [pk]
@@ -66,6 +68,8 @@ erDiagram
 ```
 
 # Minitask 2 - E-Commerce
+### DB Diagram
+![E-Commerce](e-commerce.png)
 ```DB Diagram
 Table Users {
   id int [pk]
