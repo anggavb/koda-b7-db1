@@ -93,4 +93,9 @@ WHERE first_name LIKE '%s';
 -- Mengambil data movie dengan rating minimum 4 dan maksimal 8 yang rilis pada tahun 2004-2010
 SELECT title, release_date, rating, director_id, genre_id
 FROM Movies
-WHERE rating BETWEEN 4 AND 8;
+WHERE rating BETWEEN 4 AND 8
+AND
+extract(year FROM release_date) BETWEEN 2004 AND 2010;
+
+-- AND extract(year FROM release_date) >= 2004
+-- AND extract(year FROM release_date) <= 2010;
